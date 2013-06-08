@@ -10,4 +10,15 @@
 
 @interface ViewController : UIViewController
 
+{
+    UIButton *GetPhoto;
+    
+}
+
+
+@property (nonatomic,strong)IBOutlet UIButton *GetPhoto;
+
+-(IBAction)get_a_photo:(id)sender;
+- (void) addPicEvent;
+
 @end
