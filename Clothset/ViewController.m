@@ -167,6 +167,14 @@
     //picker.wantsFullScreenLayout = YES;
    // CGAffineTransform cameraTransform = CGAffineTransformMakeScale(1.25,1.25);
    // picker.cameraViewTransform = cameraTransform;
+    
+    //在相机界面添加虚线框
+    picker.showsCameraControls = NO;
+    UIImage *overlayImage = [UIImage imageNamed:@"Tshirt.png"];
+    UIImageView *imgView = [[UIImageView alloc] initWithImage:overlayImage];
+    imgView.bounds = CGRectMake(0,0, 240, 240);
+    imgView.center = self.view.center;
+    picker.cameraOverlayView = imgView;
     [self presentModalViewController:picker animated:YES];
     picker  = nil;
     //[picker release];
