@@ -22,8 +22,8 @@
 		63CDDD13176587110061FCD4 /* clothset_controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CDDD12176587110061FCD4 /* clothset_controller.m */; };
 		63CDDD16176587380061FCD4 /* clothset_cell.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CDDD15176587380061FCD4 /* clothset_cell.m */; };
 		63CDDD19176587A80061FCD4 /* clothset_data.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CDDD18176587A80061FCD4 /* clothset_data.m */; };
-		86F2884017662E5B0046ADFC /* gun.png in Resources */ = {isa = PBXBuildFile; fileRef = 86F2883F17662E5B0046ADFC /* gun.png */; };
-		86F28847176632AC0046ADFC /* Tshirt.png in Resources */ = {isa = PBXBuildFile; fileRef = 86F28846176632AC0046ADFC /* Tshirt.png */; };
+		86D75DF217673C1D006E45D2 /* OverlayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 86D75DF117673C1D006E45D2 /* OverlayView.xib */; };
+		86D75DF517674A6F006E45D2 /* Tshirt.png in Resources */ = {isa = PBXBuildFile; fileRef = 86D75DF417674A6E006E45D2 /* Tshirt.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,8 +50,8 @@
 		63CDDD15176587380061FCD4 /* clothset_cell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = clothset_cell.m; sourceTree = "<group>"; };
 		63CDDD17176587A80061FCD4 /* clothset_data.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clothset_data.h; sourceTree = "<group>"; };
 		63CDDD18176587A80061FCD4 /* clothset_data.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = clothset_data.m; sourceTree = "<group>"; };
-		86F2883F17662E5B0046ADFC /* gun.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gun.png; path = ../gun.png; sourceTree = "<group>"; };
-		86F28846176632AC0046ADFC /* Tshirt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tshirt.png; sourceTree = "<group>"; };
+		86D75DF117673C1D006E45D2 /* OverlayView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OverlayView.xib; sourceTree = "<group>"; };
+		86D75DF417674A6E006E45D2 /* Tshirt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tshirt.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,8 +100,8 @@
 		63132FBF1763573E00DB98D7 /* Clothset */ = {
 			isa = PBXGroup;
 			children = (
-				86F28846176632AC0046ADFC /* Tshirt.png */,
-				86F2883F17662E5B0046ADFC /* gun.png */,
+				86D75DF417674A6E006E45D2 /* Tshirt.png */,
+				86D75DF117673C1D006E45D2 /* OverlayView.xib */,
 				63132FC81763573E00DB98D7 /* AppDelegate.h */,
 				63132FC91763573E00DB98D7 /* AppDelegate.m */,
 				63132FD11763573E00DB98D7 /* MainStoryboard.storyboard */,
@@ -188,8 +188,8 @@
 				63132FCE1763573E00DB98D7 /* Default@2x.png in Resources */,
 				63132FD01763573E00DB98D7 /* Default-568h@2x.png in Resources */,
 				63132FD31763573E00DB98D7 /* MainStoryboard.storyboard in Resources */,
-				86F2884017662E5B0046ADFC /* gun.png in Resources */,
-				86F28847176632AC0046ADFC /* Tshirt.png in Resources */,
+				86D75DF217673C1D006E45D2 /* OverlayView.xib in Resources */,
+				86D75DF517674A6F006E45D2 /* Tshirt.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,7 +296,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Clothset/Clothset-Prefix.pch";
 				INFOPLIST_FILE = "Clothset/Clothset-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "272194F7-E493-4920-B8E9-C9B06C3CAEAC";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "272194F7-E493-4920-B8E9-C9B06C3CAEAC";
@@ -313,7 +313,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Clothset/Clothset-Prefix.pch";
 				INFOPLIST_FILE = "Clothset/Clothset-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "272194F7-E493-4920-B8E9-C9B06C3CAEAC";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "272194F7-E493-4920-B8E9-C9B06C3CAEAC";

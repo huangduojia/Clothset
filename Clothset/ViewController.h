@@ -11,27 +11,28 @@
 #import <sqlite3.h>
 
 
-@interface ViewController : UIViewController <UIImagePickerControllerDelegate>
+@interface ViewController : UIViewController <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
 {
-    UIButton *GetPhoto;
-    UIImageView *ShotPhoto;
+    UIButton *captureImageButton;
+    UIImageView *capturedImage;
     UITextField *brands;
     NSString *databasepath;
     sqlite3 *clothsetDB;
-    UIImage *image ;
+    UIImage *imageClothes;
     int note;
 }
 
-
-@property (nonatomic,strong)IBOutlet UIButton *GetPhoto;
-@property (nonatomic,strong) IBOutlet UIImageView *ShotPhoto;
+@property (nonatomic,strong) IBOutlet UIImageView *capturedImage;
+@property (strong,nonatomic) IBOutlet UIButton *cameraButton;
 @property (nonatomic,strong) IBOutlet UITextField *brands;
-static UIImage *ShrinkImage(UIImage *original_image,CGSize size);
+//static UIImage *shrinkImage(UIImage *original_image,CGSize size);
 static UIImage *scale(UIImage *image ,CGSize size);
--(IBAction)get_a_photo:(id)sender;
--(IBAction)select_to_clothset:(id)sender;
--(IBAction)textfielddoneedit:(id)sender;
+-(IBAction)takePhoto:(id)sender;
+-(IBAction)cancelPhoto:(id)sender;
+-(IBAction)toCaptureImage:(id)sender;
+-(IBAction)enterClothset:(id)sender;
+-(IBAction)textFieldEditDone:(id)sender;
 -(IBAction)backgroundtap:(id)sender;
 -(void) addPicEvent;
 
