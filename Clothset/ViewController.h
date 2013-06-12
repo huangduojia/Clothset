@@ -27,7 +27,7 @@
 @property (strong,nonatomic) IBOutlet UIButton *cameraButton;
 @property (nonatomic,strong) IBOutlet UITextField *brands;
 //static UIImage *shrinkImage(UIImage *original_image,CGSize size);
-static UIImage *scale(UIImage *image ,CGSize size);
+static UIImage *scale(UIImage *image, CGSize size);
 -(IBAction)takePhoto:(id)sender;
 -(IBAction)cancelPhoto:(id)sender;
 -(IBAction)toCaptureImage:(id)sender;

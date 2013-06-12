@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import <MobileCoreServices/UTCoreTypes.h>
+#import "ImageProcessUtils.h"
 
 @interface ViewController ()
 @property (nonatomic) IBOutlet UIView *overlayView;
@@ -42,13 +43,13 @@
         {
             char *errMsg;
             const char *sqlStmt = "CREATE TABLE IF NOT EXISTS CLOTHSET(ID INTEGER PRIMARY KEY AUTOINCREMENT, IMAGE BLOB, BRAND TEXT,DESCRIPTION TEXT,TYPE TEXT)";
-            if (sqlite3_exec(clothsetDB, sqlStmt, NULL, NULL, &errMsg)!=SQLITE_OK) {
+            if (sqlite3_exec(clothsetDB, sqlStmt, NULL, NULL, &errMsg) != SQLITE_OK) {
                 NSLog(@"创建表失败\n");
             }
         }
         else
         {
-            NSLog(@"创建/打开数据库失败");
+            NSLog(@"创建/打开数据库失败\n");
         }
     }
 	// Do any additional setup after loading the view, typically from a nib.
@@ -74,9 +75,8 @@
     [[NSFileManager defaultManager] createDirectoryAtPath:imageDocPath withIntermediateDirectories:YES attributes:nil error:nil]; //保存图片的路径
     NSString *imageName = @"image.png";
     NSString *imagePath = [imageDocPath stringByAppendingPathComponent:imageName];
-    UIImage *originalImages=[UIImage imageWithContentsOfFile:imagePath];
     //UIImage *image = ShrinkImage(original_images, capturedImage.frame.size);
-    imageClothes = scale(originalImages, capturedImage.frame.size);
+    imageClothes = [UIImage imageWithContentsOfFile:imagePath];;
     [capturedImage setImage:imageClothes];
 }
 
@@ -109,13 +109,9 @@
     if(note == 1)
     {
         sqlite3_stmt *statement;
-        
         const char *dbpath = [databasepath UTF8String];
-        
         if (sqlite3_open(dbpath, &clothsetDB)==SQLITE_OK) {
-            
-            
-            NSData *imageData=UIImagePNGRepresentation(imageClothes);
+            NSData *imageData = UIImagePNGRepresentation(imageClothes);
             // NSString *insertSQL = [NSString stringWithFormat:@"INSERT INTO CLOTHSET(IMAGE,BRAND) VALUES(\"%@\",\"%@\")",imageData,brands.text];
             NSString *insertSQL = [NSString stringWithFormat:@"INSERT INTO CLOTHSET(IMAGE,BRAND) VALUES(?,?)"];
             const char *insertStmt = [insertSQL UTF8String];
@@ -159,13 +155,13 @@
     imagePickerController.showsCameraControls = NO;
     [[NSBundle mainBundle] loadNibNamed:@"OverlayView" owner:self options:nil];
     //设备遮挡view的背景图片
-    UIGraphicsBeginImageContext(self.view.frame.size);
-    [[UIImage imageNamed:@"Tshirt.png"] drawInRect:self.view.bounds];
-    UIImage *backgroundImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    self.overlayView.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
-    self.overlayView.frame = imagePickerController.cameraOverlayView.frame;
+//    UIGraphicsBeginImageContext(self.view.frame.size);
+//    [[UIImage imageNamed:@"Tshirt.png"] drawInRect:self.view.bounds];
+//    UIImage *backgroundImage = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    self.overlayView.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
     //跳转到相机界面
+    self.overlayView.frame = imagePickerController.cameraOverlayView.frame;
     imagePickerController.cameraOverlayView = self.overlayView;
     self.overlayView = nil;
     self.imagePickerController = imagePickerController;
@@ -184,7 +180,7 @@
 }
 
 - (void)saveImage:(UIImage *)image {
-    NSData *image_data;
+    NSData *imageData;
     //   NSLog(@"finish");
     if (image != nil) {
         //图片显示在界面上
@@ -195,15 +191,13 @@
         
         //判断图片是不是png格式的文件
         if (UIImagePNGRepresentation(image)) {
-            //返回为png图像。
-            
-            
-            image_data = UIImagePNGRepresentation(image);
+            //返回为png图像
+            imageData = UIImagePNGRepresentation(image);
         }
         else
         {
-            //返回为JPEG图像。
-            image_data = UIImageJPEGRepresentation(image, 1.0);
+            //返回为JPEG图像
+            imageData = UIImageJPEGRepresentation(image, 1.0);
         }
         //保存
         //   [[NSFileManager defaultManager] createFileAtPath:self.imagePath contents:data attributes:nil];
@@ -216,9 +210,9 @@
     NSString *imageDocPath = [documentPath stringByAppendingPathComponent:@"ImageFile"];  //创建图片文件夹
     
     [[NSFileManager defaultManager] createDirectoryAtPath:imageDocPath withIntermediateDirectories:YES attributes:nil error:nil]; //保存图片的路径
-    NSString *image_name = @"image.png";
-    NSString *imagePath = [imageDocPath stringByAppendingPathComponent:image_name];
-    [[NSFileManager defaultManager] createFileAtPath:imagePath contents:image_data attributes:nil]; //保存图片
+    NSString *imageName = @"image.png";
+    NSString *imagePath = [imageDocPath stringByAppendingPathComponent:imageName];
+    [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil]; //保存图片
     note = 1;
     //关闭相册界面
     // [picker dismissModalViewControllerAnimated:YES];
@@ -230,8 +224,9 @@
 #pragma mark Camera View Delegate Methods
 - (void)imagePickerController:(UIImagePickerController *)picker
 didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    UIImage *originalimage = [info valueForKey:UIImagePickerControllerOriginalImage];
-    UIImage *image = scale(originalimage,capturedImage.frame.size);
+    UIImage *originalImage = [info valueForKey:UIImagePickerControllerOriginalImage];
+    UIImage *image = [ImageProcessUtils cropImage:originalImage];
+//    UIImage *image = scale(corpImage,capturedImage.frame.size);
     [self performSelector:@selector(saveImage:)
                withObject:image
                afterDelay:0];
