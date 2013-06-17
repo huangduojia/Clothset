@@ -18,7 +18,8 @@
 @interface UIImage (UIImage_OpenCV)
 
 +(UIImage *)imageWithCVMat:(const cv::Mat&)cvMat;
--(id)initWithCVMat:(const cv::Mat&)cvMat;
++(UIImage *)edgeDetect:(UIImage *)originalImage threshold:(float)threshold;
+static UIImage *cropImage(UIImage *image, CGPoint *points, int pointCount);
 
 @property(nonatomic, readonly) cv::Mat CVMat;
 @property(nonatomic, readonly) cv::Mat CVGrayscaleMat;

@@ -18,7 +18,7 @@ const int kCannyAperture = 7;
 
 @implementation ViewController
 
-@synthesize cameraButton, capturedImage, brands, myslider, myslider2;
+@synthesize cameraButton, capturedImage, processedImageView, brands, myslider, myslider2;
 
 - (void)viewDidLoad
 {
@@ -80,9 +80,9 @@ const int kCannyAperture = 7;
     NSString *imagePath = [imageDocPath stringByAppendingPathComponent:imageName];
     UIImage *originalImages=[UIImage imageWithContentsOfFile:imagePath];
     //UIImage *image = ShrinkImage(original_images, capturedImage.frame.size);
-//    imageClothes = scale(originalImages, capturedImage.frame.size);
-  //  [capturedImage setImage:imageClothes];
-    [capturedImage setImage:originalImages];
+    //    imageClothes = scale(originalImages, capturedImage.frame.size);
+    //  [capturedImage setImage:imageClothes];
+    [processedImageView setImage:originalImages];
 }
 
 
@@ -235,46 +235,14 @@ const int kCannyAperture = 7;
 #pragma mark Camera View Delegate Methods
 - (void)imagePickerController:(UIImagePickerController *)picker
 didFinishPickingMediaWithInfo:(NSDictionary *)info {
-   // UIImage *originalimage = [info valueForKey:UIImagePickerControllerOriginalImage];
-    UIImage *example = scale([info valueForKey:UIImagePickerControllerOriginalImage], capturedImage.frame.size);
-    cv::Mat orginalImage = [example CVMat];
-    cv::Mat grayImage, gaussImage, cannyImage, diliateImage;
-    cv::cvtColor(orginalImage, grayImage, cv::COLOR_RGB2GRAY);
-    cv::Canny(grayImage, cannyImage,
-              myslider.value * kCannyAperture * kCannyAperture,
-              myslider2.value * kCannyAperture * kCannyAperture,
-              kCannyAperture);
-    cv::GaussianBlur(cannyImage, gaussImage, cv::Size(3, 3), 0);
-    cv::dilate(gaussImage, diliateImage, NULL);
-    cv::Mat destiny = cv::Mat::zeros(orginalImage.rows, orginalImage.cols, CV_8UC3);
-    std::vector<std::vector<cv::Point> > contours;
-    std::vector<cv::Vec4i> hierarchy;
-    findContours(diliateImage, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-    NSLog(@"%zd",contours.size());
-    int largestIndex = 0;
-    float maxArea = 0.0f;
-    for (int i = 0; i < contours.size(); i++) {
-        double area = fabs(cv::contourArea(cv::Mat(contours[i])));
-        NSLog(@"%f", area);
-        if(area > maxArea){
-            maxArea = area;
-            largestIndex = i;
-        }
-    }
-    cv::Scalar color( rand()&200, rand()&0, rand()&0 );
-    drawContours(destiny, contours, -1, color, CV_FILLED, 8, hierarchy);
-    CGPoint *points = NULL;
-    const std::vector<cv::Point> d = contours[largestIndex];
-    const int pointCount = d.size();
-    points = (CGPoint *)malloc(10000);
-    NSLog(@"%d", pointCount);
-    for (int j = 0; j < pointCount; j++) {
-        points[j] = CGPointMake(d[j].x, d[j].y);
-    }
-    UIImage *output = cropImage(example, points, pointCount);
-    [self performSelector:@selector(saveImage:)withObject:output afterDelay:0];
+    const float kThreshold = 50.0f;
+    UIImage *orginalImage = scale([info valueForKey:UIImagePickerControllerOriginalImage], processedImageView.frame.size);
+    self.capturedImage = orginalImage;
+    UIImage *processedImage = [UIImage edgeDetect:orginalImage threshold:kThreshold];
+    [processedImageView setImage:processedImage];
+    [self performSelector:@selector(saveImage:)withObject:processedImage afterDelay:0];
     // 存到照片Library
-    UIImageWriteToSavedPhotosAlbum(output, nil, nil, nil);
+    UIImageWriteToSavedPhotosAlbum(processedImage, nil, nil, nil);
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
@@ -294,123 +262,9 @@ static UIImage *scale(UIImage *image ,CGSize size)
 
 - (IBAction)sliderChanged:(id)sender
 {
-    UIImage *example = [UIImage imageNamed:@"EL.jpg"];
-    cv::Mat originalImage = [scale(example, capturedImage.frame.size) CVMat];
-    
-    cv::Mat grayImage, gaussImage, cannyImage, smoothImage, output, output_temp;
-    //  cv::GaussianBlur(cvmat_originalimage,gauss_image);
-    cv::cvtColor(originalImage, grayImage, cv::COLOR_RGB2GRAY);
-    //   adaptiveThreshold(grayimage,output, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,CV_THRESH_BINARY,51,5);
-    //    threshold(grayimage,output, 100, 255,CV_THRESH_BINARY);
-    //   UIImage *originalimage_objc = [UIImage imageWithCVMat:output];
-    
-    cv::Mat destiny = cv::Mat::zeros(originalImage.rows, originalImage.cols, CV_8UC3);
-    cv::Canny(grayImage, cannyImage,
-              myslider.value * kCannyAperture * kCannyAperture,
-              myslider2.value * kCannyAperture * kCannyAperture,
-              kCannyAperture);
-    cvSmooth(&cannyImage, &smoothImage, CV_GAUSSIAN, 3, 0, 0, 0);
-    cvDilate(&smoothImage, &output, NULL, 1);
-    std::vector<std::vector<cv::Point>> contours;
-    std::vector<cv::Vec4i> hierarchy;
-    findContours(output, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-    //NSLog(@"%zd",contours.size());
-    double maxArea = 0;
-    int i = 0;
-    int largestcontour = 0;
-    if (contours.size() != 0) {
-        
-        for(; i>=0 ; i = hierarchy[i][0])
-        {
-         //   std::vector<std::vector<cv::Point> > approx;
-         //   approxPolyDP(cv::Mat(contours[i]), approx, arcLength(cv::Mat(contours[i]), true)*0.02, true);
-         
-         
-            const std::vector<cv::Point> c = contours[i];
-            double area = fabs(cv::contourArea(cv::Mat(c)));
-             //   NSLog(@"%f",area);
-            if( area > maxArea )
-            {
-                maxArea = area;
-                largestcontour= i;
-            }
-            
-        }
-       // NSLog(@"%f",maxArea);
-        cv::Scalar color( rand()&200, rand()&0, rand()&0 );
-        //  drawContours(destiny, contours,-1, color, CV_FILLED,8,hierarchy);
-      //  const std::vector<cv::Point> d = contours[largestcontour];
-    //    double area2 = fabs(cv::contourArea(cv::Mat(d)));
-    //    NSLog(@"%f",area2);
-        drawContours(destiny, contours, -1, color, 2);
-    }
-    
-    //   NSLog(@"%f",maxArea);
-    //   NSLog(@"%D",largestcontour);
-    //  cv::Scalar color( rand()&200, rand()&0, rand()&0 );
-    //  drawContours(destiny, contours,-1, color, CV_FILLED,8,hierarchy);
-    // drawContours(destiny, contours,-1, color, 2);
-    
-    //   for ( size_t i=0; i<contours.size(); ++i )
-    //  {
-    //      cv::Scalar color( rand()&200, rand()&0, rand()&0 );
-    //       drawContours(destiny, contours, i, color, 2);
-    //  Rect brect = cv::boundingRect(contours[i]);
-    //   rectangle(destiny, brect,cv::Scalar(255,0,0));
-    //  }
-    UIImage *originalimage_objc = [UIImage imageWithCVMat:destiny];
-    
-    [capturedImage setImage:originalimage_objc];
-
+    float mThreshold = myslider.value;
+    UIImage *processedImage = [UIImage edgeDetect:self.capturedImage threshold:mThreshold];
+    [processedImageView setImage:processedImage];
 }
-
-static UIImage *cropImage(UIImage *image, CGPoint *points, int pointCount)
-{
-//    const int pointCount = 5;
-//    CGPoint *points = malloc(sizeof(CGPoint) * pointCount);
-//    points[0] = CGPointMake(160, 480);
-//    points[1] = CGPointMake(320, 240);
-//    points[2] = CGPointMake(480, 480);
-//    points[4] = CGPointMake(200, 720);
-//    points[3] = CGPointMake(440, 720);
-    UIGraphicsBeginImageContext(image.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGContextBeginPath(context);
-    CGContextAddLines(context, points, pointCount);
-    CGContextClosePath(context);
-    CGRect boundsRect = CGContextGetPathBoundingBox(context);
-    UIGraphicsEndImageContext();
-    //    CGSize cropImageSize;
-    //    cropImageSize.width = [[[NSUserDefaults standardUserDefaults] objectForKey:@"rectWidth"] floatValue] * 2.0;
-    //    cropImageSize.height = [[[NSUserDefaults standardUserDefaults] objectForKey:@"rectHeight"] floatValue] * 2.0;
-    //    float orginalX = [[[NSUserDefaults standardUserDefaults] objectForKey:@"orginalX"] floatValue] * 2.0;
-    //    float orginalY = [[[NSUserDefaults standardUserDefaults] objectForKey:@"orginalY"] floatValue] * 2.0;
-    //    UIGraphicsBeginImageContext(boundsRect.size);
-    //    // 让画布往反方向移动
-    //    [image drawInRect:CGRectMake(-orginalX, -orginalY, image.size.width, image.size.height)];
-    //    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
-    //    UIGraphicsEndImageContext();
-    //    return scaledImage;
-    UIGraphicsBeginImageContext(boundsRect.size);
-    context = UIGraphicsGetCurrentContext();
-    CGContextClearRect(context, CGRectMake(0, 0, boundsRect.size.width, boundsRect.size.height));
-    
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGAffineTransform transform = CGAffineTransformMakeTranslation(-boundsRect.origin.x, -boundsRect.origin.y);
-    CGPathAddLines(path, &transform, points, pointCount);
-    
-    CGContextBeginPath(context);
-    CGContextAddPath(context, path);
-    CGContextClip(context);
-//    CGContextDrawPath(context, kCGPathStroke);
-    [image drawInRect:CGRectMake(-boundsRect.origin.x, -boundsRect.origin.y, image.size.width, image.size.height)];
-    
-    UIImage *cropedImage = UIGraphicsGetImageFromCurrentImageContext();
-    CGPathRelease(path);
-    UIGraphicsEndImageContext();
-    return cropedImage;
-}
-
 
 @end

@@ -19,7 +19,6 @@
 
 {
     UIButton *captureImageButton;
-    UIImageView *capturedImage;
     UITextField *brands;
     NSString *databasepath;
     sqlite3 *clothsetDB;
@@ -29,14 +28,14 @@
     UISlider *myslider2;
 }
 
-@property (nonatomic,strong) IBOutlet UIImageView *capturedImage;
+@property (nonatomic,strong) UIImage *capturedImage;
+@property (nonatomic,strong) IBOutlet UIImageView *processedImageView;
 @property (strong,nonatomic) IBOutlet UIButton *cameraButton;
 @property (nonatomic,strong) IBOutlet UITextField *brands;
 @property (nonatomic,strong) IBOutlet UISlider *myslider;
 @property (nonatomic,strong) IBOutlet UISlider *myslider2;
 //static UIImage *shrinkImage(UIImage *original_image,CGSize size);
 static UIImage *scale(UIImage *image, CGSize size);
-static UIImage *cropImage(UIImage *image, CGPoint *points, int pointCount);
 -(IBAction)takePhoto:(id)sender;
 -(IBAction)cancelPhoto:(id)sender;
 -(IBAction)toCaptureImage:(id)sender;
